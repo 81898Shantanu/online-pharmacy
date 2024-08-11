@@ -10,11 +10,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LoginCredentials {
-	
-	
-	@Email
-	@Column(unique = true, nullable = false)
-	private String email;
 
-	private String password;
+
+    @Email
+    @Column(unique = true, nullable = false)
+    private String email;
+
+    private String password;
 }

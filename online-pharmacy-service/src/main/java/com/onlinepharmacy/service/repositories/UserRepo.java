@@ -1,18 +1,18 @@
 package com.onlinepharmacy.service.repositories;
 
-import java.util.List;
-import java.util.Optional;
-
+import com.onlinepharmacy.service.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.onlinepharmacy.service.entities.User;
-@Repository
-public interface UserRepo extends JpaRepository<User, Long>{
+import java.util.List;
+import java.util.Optional;
 
-	@Query("SELECT u FROM User u JOIN FETCH u.addresses a where a.addressId = ?1")
-	List<User> findByAddress(Long addressId);
-	
-	Optional<User> findByEmail(String email);
+@Repository
+public interface UserRepo extends JpaRepository<User, Long> {
+
+    @Query("SELECT u FROM User u JOIN FETCH u.addresses a where a.addressId = ?1")
+    List<User> findByAddress(Long addressId);
+
+    Optional<User> findByEmail(String email);
 }

@@ -1,14 +1,14 @@
 package com.onlinepharmacy.service.repositories;
 
+import com.onlinepharmacy.service.entities.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.onlinepharmacy.service.entities.Product;
 @Repository
 public interface ProductRepo extends JpaRepository<Product, Long> {
-	
-	Page<Product> findByProductNameLike(String keyword, Pageable pagedetails);
+
+    Page<Product> findByProductNameLike(String keyword, Pageable pagedetails);
 
 }
