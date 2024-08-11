@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
@@ -36,12 +37,12 @@ public class User {
     private Long userId;
 
     @Size(min = 5, max = 30, message = "First name should be between 5 and 30 characters long")
-    @Pattern(regexp = "^[a-zA-Z]*$", message = "First Name must not contain numbers or specail characters")
+    @Pattern(regexp = "^[a-zA-Z]*$", message = "First Name must not contain numbers or special characters")
     private String firstName;
 
 
     @Size(min = 5, max = 30, message = "Last name should be between 5 and 30 characters long")
-    @Pattern(regexp = "^[a-zA-Z]*$", message = "Last Name must not contain numbers or specail characters")
+    @Pattern(regexp = "^[a-zA-Z]*$", message = "Last Name must not contain numbers or special characters")
     private String lastName;
 
     @Size(min = 10, max = 10, message = "Mobile Number must be exactly 10 digits long")
@@ -59,8 +60,7 @@ public class User {
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name = "user_address", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "address_id"))
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Address> addresses = new ArrayList<>();
 
 

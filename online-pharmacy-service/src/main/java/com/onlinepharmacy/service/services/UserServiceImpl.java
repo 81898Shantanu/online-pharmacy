@@ -1,7 +1,6 @@
 package com.onlinepharmacy.service.services;
 
 import com.onlinepharmacy.service.config.AppConstants;
-import com.onlinepharmacy.service.entities.Address;
 import com.onlinepharmacy.service.entities.Cart;
 import com.onlinepharmacy.service.entities.CartItem;
 import com.onlinepharmacy.service.entities.Role;
@@ -13,7 +12,6 @@ import com.onlinepharmacy.service.payloads.CartDTO;
 import com.onlinepharmacy.service.payloads.ProductDTO;
 import com.onlinepharmacy.service.payloads.UserDTO;
 import com.onlinepharmacy.service.payloads.UserResponse;
-import com.onlinepharmacy.service.repositories.AddressRepo;
 import com.onlinepharmacy.service.repositories.RoleRepo;
 import com.onlinepharmacy.service.repositories.UserRepo;
 import jakarta.transaction.Transactional;
@@ -39,9 +37,6 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private RoleRepo roleRepo;
-
-    @Autowired
-    private AddressRepo addressRepo;
 
     @Autowired
     private CartService cartService;
@@ -170,29 +165,7 @@ public class UserServiceImpl implements UserService {
         user.setEmail(userDTO.getEmail());
         user.setPassword(encodedPass);
 
-        if (userDTO.getAddress() != null) {
-            String country = userDTO.getAddress().getCountry();
-            String state = userDTO.getAddress().getState();
-            String city = userDTO.getAddress().getCity();
-            String pincode = userDTO.getAddress().getPincode();
-            String street = userDTO.getAddress().getStreet();
-            String buildingName = userDTO.getAddress().getBuildingName();
-
-            Address address = addressRepo.findByCountryAndStateAndCityAndPincodeAndStreetAndBuildingName(country, state,
-                    city, pincode, street, buildingName);
-
-            if (address == null) {
-                address = new Address(country, state, city, pincode, street, buildingName);
-
-                address = addressRepo.save(address);
-
-                user.setAddresses(List.of(address));
-            }
-        }
-
         userDTO = modelMapper.map(user, UserDTO.class);
-
-        userDTO.setAddress(modelMapper.map(user.getAddresses().stream().findFirst().get(), AddressDTO.class));
 
         CartDTO cart = modelMapper.map(user.getCart(), CartDTO.class);
 

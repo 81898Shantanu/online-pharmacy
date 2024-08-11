@@ -4,7 +4,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -51,17 +53,7 @@ public class Address {
     @Size(min = 6, message = "Pincode must contain atleast 6 characters")
     private String pincode;
 
-    @ManyToMany(mappedBy = "addresses")
-    private List<User> users = new ArrayList<>();
-
-    public Address(String street, String buildingName, String city, String state, String country, String pincode) {
-        this.street = street;
-        this.buildingName = buildingName;
-        this.city = city;
-        this.state = state;
-        this.country = country;
-        this.pincode = pincode;
-    }
-
-
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }
