@@ -55,46 +55,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO registerUser(UserDTO userDTO) {
-//		Maps: Converts UserDTO to User entity and back.
-//		Cart Creation: Creates and links a cart to the user.
-//		Role Assignment: Assigns a predefined role to the user.
-//		Address Handling: Searches for an existing address or creates a new one if it doesn't exist.
-//		Error Handling: Catches and handles exceptions related to data integrity.
         try {
             User user = modelMapper.map(userDTO, User.class);
-
-            Cart cart = new Cart();
-            user.setCart(cart);
-
-            Role role = roleRepo.findById(AppConstants.USER_ID).get();
+            Role role = roleRepo.findById(AppConstants.USER_ID).orElseThrow();
             user.getRoles().add(role);
 
-            String country = userDTO.getAddress().getCountry();
-            String state = userDTO.getAddress().getState();
-            String city = userDTO.getAddress().getCity();
-            String pincode = userDTO.getAddress().getPincode();
-            String street = userDTO.getAddress().getStreet();
-            String buildingName = userDTO.getAddress().getBuildingName();
-
-            Address address = addressRepo.findByCountryAndStateAndCityAndPincodeAndStreetAndBuildingName(country, state,
-                    city, pincode, street, buildingName);
-
-            if (address == null) {
-                address = new Address(country, state, city, pincode, street, buildingName);
-
-                address = addressRepo.save(address);
-            }
-
-            user.setAddresses(List.of(address));
+            Cart cart = new Cart();
+            cart.setUser(user);
+            user.setCart(cart);
 
             User registeredUser = userRepo.save(user);
-
-            cart.setUser(registeredUser);
-
             userDTO = modelMapper.map(registeredUser, UserDTO.class);
-
-            userDTO.setAddress(modelMapper.map(user.getAddresses().stream().findFirst().get(), AddressDTO.class));
-
             return userDTO;
         } catch (DataIntegrityViolationException e) {
             throw new APIException("User already exists with emailId: " + userDTO.getEmail());
