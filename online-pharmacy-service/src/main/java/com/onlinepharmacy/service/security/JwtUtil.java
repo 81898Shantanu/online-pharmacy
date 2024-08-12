@@ -6,16 +6,21 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
 @Component
-public class JWTUtil {
+public class JwtUtil {
 
-    @Value("${jwt_secret}")
-    private String secret;
+    private final String secret;
+
+    @Autowired
+    public JwtUtil(@Value("${jwt.secret}") String secret) {
+        this.secret = secret;
+    }
 
     public String generateToken(String email) throws IllegalArgumentException, JWTCreationException {
         return JWT.create()
@@ -32,8 +37,6 @@ public class JWTUtil {
                 .withIssuer("Event Scheduler").build();
 
         DecodedJWT jwt = verifier.verify(token);
-
         return jwt.getClaim("email").asString();
     }
-
 }

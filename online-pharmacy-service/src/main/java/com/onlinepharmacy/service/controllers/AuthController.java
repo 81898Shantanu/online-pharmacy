@@ -1,12 +1,12 @@
 package com.onlinepharmacy.service.controllers;
 
-import com.onlinepharmacy.service.exceptions.UserNotFoundException;
 import com.onlinepharmacy.service.payloads.LoginCredentials;
 import com.onlinepharmacy.service.payloads.UserDTO;
-import com.onlinepharmacy.service.security.JWTUtil;
+import com.onlinepharmacy.service.security.JwtUtil;
 import com.onlinepharmacy.service.services.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,44 +24,30 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api")
 @SecurityRequirement(name = "E-Commerce Application")
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class AuthController {
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private JWTUtil jwtUtil;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final UserService userService;
+    private final JwtUtil jwtUtil;
+    private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
-    public ResponseEntity<Map<String, Object>> registerHandler(@Valid @RequestBody UserDTO user) throws UserNotFoundException {
+    public ResponseEntity<Map<String, Object>> registerHandler(@Valid @RequestBody UserDTO user) {
         String encodedPass = passwordEncoder.encode(user.getPassword());
-
         user.setPassword(encodedPass);
-
         UserDTO userDTO = userService.registerUser(user);
-
         String token = jwtUtil.generateToken(userDTO.getEmail());
-
-        return new ResponseEntity<Map<String, Object>>(Collections.singletonMap("jwt-token", token),
+        return new ResponseEntity<>(Collections.singletonMap("jwt-token", token),
                 HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
     public Map<String, Object> loginHandler(@Valid @RequestBody LoginCredentials credentials) {
-
         UsernamePasswordAuthenticationToken authCredentials = new UsernamePasswordAuthenticationToken(
                 credentials.getEmail(), credentials.getPassword());
-
         authenticationManager.authenticate(authCredentials);
-
         String token = jwtUtil.generateToken(credentials.getEmail());
-
         return Collections.singletonMap("jwt-token", token);
     }
 }

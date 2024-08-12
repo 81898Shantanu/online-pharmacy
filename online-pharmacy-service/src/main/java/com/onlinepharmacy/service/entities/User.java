@@ -40,7 +40,6 @@ public class User {
     @Pattern(regexp = "^[a-zA-Z]*$", message = "First Name must not contain numbers or special characters")
     private String firstName;
 
-
     @Size(min = 5, max = 30, message = "Last name should be between 5 and 30 characters long")
     @Pattern(regexp = "^[a-zA-Z]*$", message = "Last Name must not contain numbers or special characters")
     private String lastName;
@@ -55,7 +54,6 @@ public class User {
 
     private String password;
 
-
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
@@ -63,9 +61,6 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Address> addresses = new ArrayList<>();
 
-
     @OneToOne(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private Cart cart;
-
-
 }

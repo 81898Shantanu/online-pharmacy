@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class LoginCredentials {
 
-
     @Email
     @Column(unique = true, nullable = false)
     private String email;

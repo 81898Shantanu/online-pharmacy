@@ -5,6 +5,7 @@ import com.onlinepharmacy.service.payloads.UserDTO;
 import com.onlinepharmacy.service.payloads.UserResponse;
 import com.onlinepharmacy.service.services.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +21,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api")
 @SecurityRequirement(name = "E-Commerce Application")
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     @GetMapping("/admin/users")
     public ResponseEntity<UserResponse> getUsers(
@@ -33,28 +34,24 @@ public class UserController {
             @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder) {
 
         UserResponse userResponse = userService.getAllUsers(pageNumber, pageSize, sortBy, sortOrder);
-
-        return new ResponseEntity<UserResponse>(userResponse, HttpStatus.FOUND);
+        return new ResponseEntity<>(userResponse, HttpStatus.FOUND);
     }
 
     @GetMapping("/public/users/{userId}")
     public ResponseEntity<UserDTO> getUser(@PathVariable Long userId) {
         UserDTO user = userService.getUserById(userId);
-
-        return new ResponseEntity<UserDTO>(user, HttpStatus.FOUND);
+        return new ResponseEntity<>(user, HttpStatus.FOUND);
     }
 
     @PutMapping("/public/users/{userId}")
     public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO userDTO, @PathVariable Long userId) {
         UserDTO updatedUser = userService.updateUser(userId, userDTO);
-
-        return new ResponseEntity<UserDTO>(updatedUser, HttpStatus.OK);
+        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
     @DeleteMapping("/admin/users/{userId}")
     public ResponseEntity<String> deleteUser(@PathVariable Long userId) {
         String status = userService.deleteUser(userId);
-
-        return new ResponseEntity<String>(status, HttpStatus.OK);
+        return new ResponseEntity<>(status, HttpStatus.OK);
     }
 }
