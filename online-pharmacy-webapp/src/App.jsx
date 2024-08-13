@@ -1,45 +1,82 @@
-import { Route, Routes } from "react-router-dom";
-import "./App.css";
-import Home from "./pages/Home";
-import LoginUser from "./pages/Login";
-import RegisterUser from "./pages/Register";
+import React, { Suspense, lazy } from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import MyState from "./context/myState";
+import { Toaster } from "react-hot-toast";
+import { ProtectedRouteForUser } from "./protectedRoute/ProtectedRouteForUser";
+import { ProtectedRouteForAdmin } from "./protectedRoute/ProtectedRouteForAdmin";
+import ScrollTop from "./components/scrollTop/ScrollTop";
 
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import Navbar from "./components/navbar";
-import Cart from "./pages/cart";
-import AddProduct from "./pages/addProduct";
-import ProductDetails from "./pages/productDetails";
-import Checkout from "./pages/checkout";
-import { useSelector } from "react-redux";
-import ManageProfiles from "./pages/manageprofiles";
-import SearchResult from "./pages/searchResult";
-function App() {
-  const user = useSelector((state) => state.user);
+// Lazy-loaded components
+const HomePage = lazy(() => import("./pages/home/HomePage"));
+const NoPage = lazy(() => import("./pages/noPage/NoPage"));
+const ProductInfo = lazy(() => import("./pages/productInfo/ProductInfo"));
+const CartPage = lazy(() => import("./pages/cart/CartPage"));
+const AllProduct = lazy(() => import("./pages/allProduct/AllProduct"));
+const Signup = lazy(() => import("./pages/registration/Signup"));
+const Login = lazy(() => import("./pages/registration/Login"));
+const UserDashboard = lazy(() => import("./pages/user/UserDashboard"));
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
+const AddProductPage = lazy(() => import("./pages/admin/AddProductPage"));
+const UpdateProductPage = lazy(() => import("./pages/admin/UpdateProductPage"));
+const CategoryPage = lazy(() => import("./pages/category/CategoryPage"));
 
+const App = () => {
   return (
-    <div className="container-fluid">
-      {/* if user is logged in then only render the navbar */}
-      {user.loginStatus && <Navbar />}
-
-      <div className="container">
-        <Routes>
-          <Route path="/" element={<LoginUser />} />
-          <Route path="/login" element={<LoginUser />} />
-          <Route path="/register" element={<RegisterUser />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/add-product" element={<AddProduct />} />
-          <Route path="/productDetails" element={<ProductDetails />} />
-          <Route path="/manageProfiles" element={<ManageProfiles />} />
-          <Route path="/SearchResult" element={<SearchResult />} />
-        </Routes>
-
-        <ToastContainer />
-      </div>
-    </div>
+    <MyState>
+      <Router>
+        <ScrollTop />
+        <Suspense fallback={<div>Loading...</div>}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/*" element={<NoPage />} />
+            <Route path="/productinfo/:id" element={<ProductInfo />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/allproduct" element={<AllProduct />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/category/:categoryname" element={<CategoryPage />} />
+            <Route
+              path="/user-dashboard"
+              element={<UserDashboard />}
+              // element={
+              //   <ProtectedRouteForUser>
+              //     <UserDashboard />
+              //   </ProtectedRouteForUser>
+              // }
+            />
+            <Route
+              path="/admin-dashboard"
+              element={<AdminDashboard />}
+              // element={
+              //   <ProtectedRouteForAdmin>
+              //     <AdminDashboard />
+              //   </ProtectedRouteForAdmin>
+              // }
+            />
+            <Route
+              path="/addproduct"
+              element={<AddProductPage />}
+              // element={
+              //   <ProtectedRouteForAdmin>
+              //     <AddProductPage />
+              //   </ProtectedRouteForAdmin>
+              // }
+            />
+            <Route
+              path="/updateproduct/:id"
+              element={<UpdateProductPage />}
+              // element={
+              //   <ProtectedRouteForAdmin>
+              //     <UpdateProductPage />
+              //   </ProtectedRouteForAdmin>
+              // }
+            />
+          </Routes>
+        </Suspense>
+        <Toaster />
+      </Router>
+    </MyState>
   );
-}
+};
 
 export default App;
