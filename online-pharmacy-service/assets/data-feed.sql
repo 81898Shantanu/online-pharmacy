@@ -1,12 +1,12 @@
-INSERT INTO categories (category_name)
-VALUES ('Drugs'),
-       ('Injection'),
-       ('Cosmetic'),
-       ('Homeo'),
-       ('Pain-relief'),
-       ('Devices'),
-       ('Vitamins'),
-       ('First-Aid');
+INSERT INTO categories (category_name, image)
+VALUES ('Drugs', '/drugs.png'),
+       ('Injection', '/injection.png'),
+       ('Cosmetic', '/sun-block.png'),
+       ('Homeo', '/homeopathy.png'),
+       ('Pain-relief', '/pain-relief.png'),
+       ('Devices', '/lab-equipment.png'),
+       ('Vitamins', '/multivitamin.png'),
+       ('First-Aid', '/first-aid-kit.png');
 
 INSERT INTO products (description, discount, image, price, product_name, quantity, special_price,
                       category_id)

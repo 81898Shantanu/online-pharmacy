@@ -34,16 +34,16 @@ public class UserController {
             @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder) {
 
         UserResponse userResponse = userService.getAllUsers(pageNumber, pageSize, sortBy, sortOrder);
-        return new ResponseEntity<>(userResponse, HttpStatus.FOUND);
+        return new ResponseEntity<>(userResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/public/users/{userId}")
+    @GetMapping("/users/{userId}")
     public ResponseEntity<UserDTO> getUser(@PathVariable Long userId) {
         UserDTO user = userService.getUserById(userId);
-        return new ResponseEntity<>(user, HttpStatus.FOUND);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @PutMapping("/public/users/{userId}")
+    @PutMapping("/users/{userId}")
     public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO userDTO, @PathVariable Long userId) {
         UserDTO updatedUser = userService.updateUser(userId, userDTO);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);

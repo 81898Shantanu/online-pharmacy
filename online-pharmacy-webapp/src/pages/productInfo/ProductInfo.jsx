@@ -20,7 +20,7 @@ const ProductInfo = () => {
   const getProductData = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`http://localhost:8080/api/products/${id}`); // Adjust the URL to your API endpoint
+      const response = await axios.get(`http://localhost:8080/api/public/products/${id}`); // Adjust the URL to your API endpoint
       setProduct(response.data);
     } catch (error) {
       console.log(error);
@@ -47,7 +47,7 @@ const ProductInfo = () => {
   }, [cartItems]);
 
   useEffect(() => {
-    getProductData();
+    getProductData()
   }, []);
 
   return (
@@ -61,11 +61,11 @@ const ProductInfo = () => {
           <Container>
             <Row className="mb-4">
               <Col md={6}>
-                <img className="w-100 rounded-lg" src={product?.productImageUrl} alt={product?.title} />
+                <img className="w-50 rounded-lg" src={product?.image} alt={product?.productName} />
               </Col>
               <Col md={6}>
                 <div className="ps-md-4">
-                  <h2 className="mb-4">{product?.title}</h2>
+                  <h2 className="mb-4">{product?.productName}</h2>
                   <div className="mb-4">
                     <div className="d-flex mb-3">
                       {[...Array(4)].map((_, index) => (
@@ -89,7 +89,7 @@ const ProductInfo = () => {
                     <p>{product?.description}</p>
                   </div>
                   <div className="mb-4">
-                    {cartItems.some((p) => p.id === product.id) ? (
+                    {cartItems.some((p) => p.productId === product.productId) ? (
                       <Button onClick={() => deleteCart(product)} className="w-100" variant="danger">
                         Remove from cart
                       </Button>

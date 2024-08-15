@@ -23,7 +23,7 @@ const AllProduct = () => {
     setLoading(true);
     try {
       // Fetch products from the public API without including the token
-      const response = await axios.get("http://localhost:8080/api/public/products");
+      const response = await axios.get("http://localhost:8080/api/public/products?pageSize=100");
       const productsArray = response.data.content || [];
       setProducts(productsArray);
     } catch (error) {

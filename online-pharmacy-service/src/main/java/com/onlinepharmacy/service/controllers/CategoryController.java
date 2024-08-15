@@ -43,7 +43,7 @@ public class CategoryController {
             @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder) {
 
         CategoryResponse categoryResponse = categoryService.getCategories(pageNumber, pageSize, sortBy, sortOrder);
-        return new ResponseEntity<>(categoryResponse, HttpStatus.FOUND);
+        return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
 
     @PutMapping("/admin/categories/{categoryId}")

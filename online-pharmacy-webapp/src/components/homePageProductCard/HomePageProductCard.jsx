@@ -23,7 +23,7 @@ const HomePageProductCard = () => {
     setLoading(true);
     try {
       // Make the API request without adding the Authorization header
-      const response = await axios.get("http://localhost:8080/api/public/products");
+      const response = await axios.get("http://localhost:8080/api/public/products?pageSize=100");
       const productsArray = response.data.content || [];
       setProducts(productsArray);
       setDisplayedProducts(productsArray.slice(0, 12)); // Display first 12 products

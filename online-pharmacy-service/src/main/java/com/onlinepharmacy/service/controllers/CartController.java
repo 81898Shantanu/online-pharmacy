@@ -25,7 +25,7 @@ public class CartController {
 
     private final CartService cartService;
 
-    @PostMapping("/public/carts/{cartId}/products/{productId}/quantity/{quantity}")
+    @PostMapping("/users/carts/{cartId}/products/{productId}/quantity/{quantity}")
     public ResponseEntity<CartDTO> addProductToCart(@PathVariable Long cartId, @PathVariable Long productId, @PathVariable Integer quantity) {
         CartDTO cartDTO = cartService.addProductToCart(cartId, productId, quantity);
         return new ResponseEntity<>(cartDTO, HttpStatus.CREATED);
@@ -34,22 +34,22 @@ public class CartController {
     @GetMapping("/admin/carts")
     public ResponseEntity<List<CartDTO>> getCarts() {
         List<CartDTO> cartDTOs = cartService.getAllCarts();
-        return new ResponseEntity<>(cartDTOs, HttpStatus.FOUND);
+        return new ResponseEntity<>(cartDTOs, HttpStatus.OK);
     }
 
-    @GetMapping("/public/users/{emailId}/carts/{cartId}")
+    @GetMapping("/users/{emailId}/carts/{cartId}")
     public ResponseEntity<CartDTO> getCartById(@PathVariable String emailId, @PathVariable Long cartId) {
         CartDTO cartDTO = cartService.getCart(emailId, cartId);
-        return new ResponseEntity<>(cartDTO, HttpStatus.FOUND);
+        return new ResponseEntity<>(cartDTO, HttpStatus.OK);
     }
 
-    @PutMapping("/public/carts/{cartId}/products/{productId}/quantity/{quantity}")
+    @PutMapping("/users/carts/{cartId}/products/{productId}/quantity/{quantity}")
     public ResponseEntity<CartDTO> updateCartProduct(@PathVariable Long cartId, @PathVariable Long productId, @PathVariable Integer quantity) {
         CartDTO cartDTO = cartService.updateProductQuantityInCart(cartId, productId, quantity);
         return new ResponseEntity<>(cartDTO, HttpStatus.OK);
     }
 
-    @DeleteMapping("/public/carts/{cartId}/product/{productId}")
+    @DeleteMapping("/users/carts/{cartId}/product/{productId}")
     public ResponseEntity<String> deleteProductFromCart(@PathVariable Long cartId, @PathVariable Long productId) {
         String status = cartService.deleteProductFromCart(cartId, productId);
         return new ResponseEntity<>(status, HttpStatus.OK);

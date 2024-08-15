@@ -27,7 +27,7 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    @PostMapping("/public/users/{emailId}/carts/{cartId}/payments/{paymentMethod}/order")
+    @PostMapping("/users/{emailId}/carts/{cartId}/payments/{paymentMethod}/order")
     public ResponseEntity<OrderDTO> orderProducts(@PathVariable String emailId, @PathVariable Long cartId, @PathVariable String paymentMethod) {
         OrderDTO order = orderService.placeOrder(emailId, cartId, paymentMethod);
         return new ResponseEntity<>(order, HttpStatus.CREATED);
@@ -41,22 +41,22 @@ public class OrderController {
             @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder) {
 
         OrderResponse orderResponse = orderService.getAllOrders(pageNumber, pageSize, sortBy, sortOrder);
-        return new ResponseEntity<>(orderResponse, HttpStatus.FOUND);
+        return new ResponseEntity<>(orderResponse, HttpStatus.OK);
     }
 
-    @GetMapping("public/users/{emailId}/orders")
+    @GetMapping("/users/{emailId}/orders")
     public ResponseEntity<List<OrderDTO>> getOrdersByUser(@PathVariable String emailId) {
         List<OrderDTO> orders = orderService.getOrdersByUser(emailId);
-        return new ResponseEntity<>(orders, HttpStatus.FOUND);
+        return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
-    @GetMapping("public/users/{emailId}/orders/{orderId}")
+    @GetMapping("/users/{emailId}/orders/{orderId}")
     public ResponseEntity<OrderDTO> getOrderByUser(@PathVariable String emailId, @PathVariable Long orderId) {
         OrderDTO order = orderService.getOrder(emailId, orderId);
-        return new ResponseEntity<>(order, HttpStatus.FOUND);
+        return new ResponseEntity<>(order, HttpStatus.OK);
     }
 
-    @PutMapping("admin/users/{emailId}/orders/{orderId}/orderStatus/{orderStatus}")
+    @PutMapping("/admin/users/{emailId}/orders/{orderId}/orderStatus/{orderStatus}")
     public ResponseEntity<OrderDTO> updateOrderByUser(@PathVariable String emailId, @PathVariable Long orderId, @PathVariable String orderStatus) {
         OrderDTO order = orderService.updateOrder(emailId, orderId, orderStatus);
         return new ResponseEntity<>(order, HttpStatus.OK);
