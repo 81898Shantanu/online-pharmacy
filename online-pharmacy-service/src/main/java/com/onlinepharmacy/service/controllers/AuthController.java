@@ -1,5 +1,7 @@
 package com.onlinepharmacy.service.controllers;
 
+import com.onlinepharmacy.service.entities.Role;
+import com.onlinepharmacy.service.entities.User;
 import com.onlinepharmacy.service.payloads.LoginCredentials;
 import com.onlinepharmacy.service.payloads.UserDTO;
 import com.onlinepharmacy.service.security.JwtUtil;
@@ -48,6 +50,17 @@ public class AuthController {
                 credentials.getEmail(), credentials.getPassword());
         authenticationManager.authenticate(authCredentials);
         String token = jwtUtil.generateToken(credentials.getEmail());
-        return Collections.singletonMap("jwt-token", token);
+        UserDTO userDTO = userService.getUserByEmail(credentials.getEmail());
+        String role = userDTO.getRoles()
+                .stream()
+                .map(Role::getRoleName)
+                .filter("ADMIN"::equals)
+                .findFirst()
+                .orElse("USER");
+        return Map.of("jwt-token", token,
+                "role", role,
+                "firstName", userDTO.getFirstName(),
+                "lastName", userDTO.getLastName(),
+                "user", userDTO.getEmail());
     }
 }

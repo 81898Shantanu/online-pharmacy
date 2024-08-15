@@ -139,6 +139,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDTO getUserByEmail(String email) {
+        User user = userRepo.findByEmail(email).orElseThrow();
+        return modelMapper.map(user, UserDTO.class);
+    }
+
+    @Override
     public UserDTO updateUser(Long userId, UserDTO userDTO) {
 //		User Retrieval: Retrieves the user by ID from the repository.
 //		Password Encoding: Encodes the new password.

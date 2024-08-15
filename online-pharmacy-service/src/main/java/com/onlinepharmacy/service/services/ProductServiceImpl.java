@@ -238,7 +238,7 @@ public class ProductServiceImpl implements ProductService {
 
         String wrappedKeyword = "%" + keyword + "%";
         Page<Product> pageProducts = productRepo.findByProductNameLikeIgnoreCaseOrDescriptionLikeIgnoreCase(
-                wrappedKeyword, wrappedKeyword, pageDetails);
+                wrappedKeyword, "", pageDetails);
 
         List<Product> products = pageProducts.getContent();
 
