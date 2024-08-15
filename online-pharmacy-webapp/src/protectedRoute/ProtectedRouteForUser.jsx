@@ -2,11 +2,11 @@
 import { Navigate } from "react-router";
 
 export const ProtectedRouteForUser = ({ children }) => {
-  const user = JSON.parse(localStorage.getItem("users"));
+  const role = JSON.parse(localStorage.getItem("role"));
 
-  if (user?.role === "user") {
+  if (role === null || role === "USER") {
     return children;
   } else {
-    return <Navigate to="/login" />;
+    return <Navigate to="/admin-dashboard" />;
   }
 };

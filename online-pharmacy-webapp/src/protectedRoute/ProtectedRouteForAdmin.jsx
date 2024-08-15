@@ -1,12 +1,11 @@
-/* eslint-disable react/prop-types */
 import { Navigate } from "react-router";
 
 export const ProtectedRouteForAdmin = ({ children }) => {
-    const user = JSON.parse(localStorage.getItem('users'));
+    const role = JSON.parse(localStorage.getItem('role'));
 
-    if (user?.role === "admin") {
+    if (role === "ADMIN") {
         return children;
     } else {
-        return <Navigate to="/login" />;
+        return <Navigate to="/404" />;
     }
 };

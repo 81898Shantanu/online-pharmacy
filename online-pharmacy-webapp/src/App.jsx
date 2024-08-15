@@ -27,49 +27,80 @@ const App = () => {
         <ScrollTop />
         <Suspense fallback={<div>Loading...</div>}>
           <Routes>
-            <Route path="/" element={<HomePage />} />
+            <Route
+                path="/"
+                element={
+                  <ProtectedRouteForUser>
+                    <HomePage />
+                  </ProtectedRouteForUser>
+                }
+            />
             <Route path="/*" element={<NoPage />} />
-            <Route path="/productinfo/:id" element={<ProductInfo />} />
-            <Route path="/cart" element={<CartPage />} />
-            <Route path="/allproduct" element={<AllProduct />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/category/:categoryname" element={<CategoryPage />} />
+            <Route
+                path="/productinfo/:id"
+                element={
+                  <ProtectedRouteForUser>
+                    <ProductInfo />
+                  </ProtectedRouteForUser>
+                }
+            />
+            <Route
+                path="/cart"
+                element={
+                  <ProtectedRouteForUser>
+                    <CartPage />
+                  </ProtectedRouteForUser>
+                }
+            />
+            <Route
+                path="/allproduct"
+                element={
+                  <ProtectedRouteForUser>
+                    <AllProduct />
+                  </ProtectedRouteForUser>
+                }
+            />
+            <Route
+                path="/category/:categoryname"
+                element={
+                  <ProtectedRouteForUser>
+                    <CategoryPage />
+                  </ProtectedRouteForUser>
+                }
+            />
             <Route
               path="/user-dashboard"
-              element={<UserDashboard />}
-              // element={
-              //   <ProtectedRouteForUser>
-              //     <UserDashboard />
-              //   </ProtectedRouteForUser>
-              // }
+              element={
+                <ProtectedRouteForUser>
+                  <UserDashboard />
+                </ProtectedRouteForUser>
+              }
             />
             <Route
               path="/admin-dashboard"
-              element={<AdminDashboard />}
-              // element={
-              //   <ProtectedRouteForAdmin>
-              //     <AdminDashboard />
-              //   </ProtectedRouteForAdmin>
-              // }
+              element={
+                <ProtectedRouteForAdmin>
+                  <AdminDashboard />
+                </ProtectedRouteForAdmin>
+              }
             />
             <Route
               path="/addproduct"
-              element={<AddProductPage />}
-              // element={
-              //   <ProtectedRouteForAdmin>
-              //     <AddProductPage />
-              //   </ProtectedRouteForAdmin>
-              // }
+              element={
+                <ProtectedRouteForAdmin>
+                  <AddProductPage />
+                </ProtectedRouteForAdmin>
+              }
             />
             <Route
               path="/updateproduct/:id"
-              element={<UpdateProductPage />}
-              // element={
-              //   <ProtectedRouteForAdmin>
-              //     <UpdateProductPage />
-              //   </ProtectedRouteForAdmin>
-              // }
+              element={
+                <ProtectedRouteForAdmin>
+                  <UpdateProductPage />
+                </ProtectedRouteForAdmin>
+              }
             />
           </Routes>
         </Suspense>

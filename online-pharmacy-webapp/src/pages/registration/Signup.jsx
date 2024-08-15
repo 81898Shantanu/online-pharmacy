@@ -17,8 +17,7 @@ const Signup = () => {
     lastName: "",
     mobileNumber: "",
     email: "",
-    password: "",
-    role: "user",
+    password: ""
   });
 
   /**========================================================================
