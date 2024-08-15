@@ -1,57 +1,28 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import debounce from "lodash/debounce";
 import axios from "axios";
 import myContext from "../../context/myContext"; // Adjust import based on your project structure
 
 const SearchBar = () => {
   const context = useContext(myContext);
-  const { setLoading } = context;
   const [search, setSearch] = useState("");
-  const [filteredData, setFilteredData] = useState([]);
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
 
-  const fetchProducts = async () => {
-    setLoading(true);
+  const fetchData = async (input) => {
     try {
-      const token = JSON.parse(localStorage.getItem('token'));
-      if (!token) {
-        throw new Error('Token not found');
-      }
-      const response = await axios.get("http://localhost:8080/api/public/products", {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await axios.get(`http://localhost:8080/api/public/products/keyword/${input}?pageSize=8`);
       const productsArray = response.data.content || [];
       setProducts(productsArray);
     } catch (error) {
       console.error("Error fetching products:", error);
-    } finally {
-      setLoading(false);
     }
   };
 
-  // Fetch products when the component mounts
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  // Debounced Filter Function
-  const debouncedFilter = debounce((query) => {
-    if (products) {
-      const results = products.filter((obj) => obj.productName.toLowerCase().includes(query.toLowerCase())).slice(0, 8);
-      setFilteredData(results);
-    }
-  }, 300);
-
-  useEffect(() => {
-    debouncedFilter(search);
-    return () => {
-      debouncedFilter.cancel();
-    };
-  }, [search, products]);
+  const handleSearchInputChange = (input) => {
+    setSearch(input);
+    fetchData(input);
+  };
 
   return (
     <div className="position-relative">
@@ -60,7 +31,7 @@ const SearchBar = () => {
           type="text"
           placeholder="Search here"
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => handleSearchInputChange(e.target.value)}
           className="form-control"
           style={{ width: '100%' }}
         />
@@ -70,8 +41,8 @@ const SearchBar = () => {
         <div className="position-absolute bg-light border rounded shadow-lg z-index-100 mt-1"
              style={{ width: '100%' }}
         >
-          {filteredData.length > 0 ? (
-            filteredData.map((item) => (
+          {products.length > 0 ? (
+              products.map((item) => (
               <div
                 key={item.productId}
                 className="p-2 cursor-pointer d-flex align-items-center border-bottom"
