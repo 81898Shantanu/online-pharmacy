@@ -236,13 +236,11 @@ public class ProductServiceImpl implements ProductService {
 
         Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
 
-        Page<Product> pageProducts = productRepo.findByProductNameLike(keyword, pageDetails);
+        String wrappedKeyword = "%" + keyword + "%";
+        Page<Product> pageProducts = productRepo.findByProductNameLikeIgnoreCaseOrDescriptionLikeIgnoreCase(
+                wrappedKeyword, wrappedKeyword, pageDetails);
 
         List<Product> products = pageProducts.getContent();
-
-        if (products.isEmpty()) {
-            throw new APIException("Products not found with keyword: " + keyword);
-        }
 
         List<ProductDTO> productDTOs = products.stream().map(p -> modelMapper.map(p, ProductDTO.class))
                 .collect(Collectors.toList());
