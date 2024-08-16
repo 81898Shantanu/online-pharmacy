@@ -55,6 +55,12 @@ public class OrderServiceImpl implements OrderService {
             throw new ResourceNotFoundException("Cart", "cartId", cartId);
         }
 
+        List<CartItem> cartItems = cart.getCartItems();
+
+        if (cartItems.isEmpty()) {
+            throw new APIException("Cart is empty");
+        }
+
         Order order = new Order();
 
         order.setEmail(emailId);
@@ -66,7 +72,7 @@ public class OrderServiceImpl implements OrderService {
                 .map(Product::getPrice)
                 .mapToDouble(price -> price)
                 .sum());
-        order.setOrderStatus("Order Accepted !");
+        order.setOrderStatus("PLACED");
 
         Payment payment = new Payment();
         payment.setOrder(order);
@@ -78,21 +84,14 @@ public class OrderServiceImpl implements OrderService {
 
         Order savedOrder = orderRepo.save(order);
 
-        List<CartItem> cartItems = cart.getCartItems();
-
-        if (cartItems.isEmpty()) {
-            throw new APIException("Cart is empty");
-        }
-
         List<OrderItem> orderItems = new ArrayList<>();
 
         for (CartItem cartItem : cartItems) {
             OrderItem orderItem = new OrderItem();
-
             orderItem.setProduct(cartItem.getProduct());
             orderItem.setQuantity(cartItem.getQuantity());
             orderItem.setOrder(savedOrder);
-
+            orderItem.setOrderedProductPrice(cartItem.getProduct().getPrice());
             orderItems.add(orderItem);
         }
 
