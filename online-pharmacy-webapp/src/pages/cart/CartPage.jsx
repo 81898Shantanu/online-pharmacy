@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import Layout from "../../components/layout/Layout";
 import { Trash } from "lucide-react";
-import { decrementQuantity, deleteFromCart, incrementQuantity } from "../../redux/cartSlice";
+import {decrementQuantity, deleteFromCart, incrementQuantity, resetCart} from "../../redux/cartSlice";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -19,11 +19,13 @@ const CartPage = () => {
   };
 
 // Handle incrementing quantity
-const handleIncrement = (productId) => {
+const handleIncrement = async (productId) => {
+  const response = await axios.get(`http://localhost:8080/api/public/products/${productId}`);
+  const quantity = response.data.quantity;
   const item = cartItems.find((item) => item.productId === productId);
   if (item) {
-    if (item.quantity < item.availableQuantity) {
-      dispatch(incrementQuantity(productId));
+    if (item.quantity < quantity) {
+      dispatch(incrementQuantity({productId: productId, quantity: quantity}));
     } else {
       toast.error("Cannot exceed available quantity");
     }

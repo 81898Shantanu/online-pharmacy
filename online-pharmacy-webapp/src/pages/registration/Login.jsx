@@ -4,10 +4,13 @@ import myContext from "../../context/myContext";
 import toast from "react-hot-toast";
 import axios from "axios";
 import Loader from "../../components/loader/Loader";
+import {useDispatch} from "react-redux";
+import {initializeCart} from "../../redux/cartSlice";
 
 const Login = () => {
     const context = useContext(myContext);
     const {loading, setLoading} = context;
+    const dispatch = useDispatch();
 
     const navigate = useNavigate();
 
@@ -15,6 +18,21 @@ const Login = () => {
         email: "",
         password: "",
     });
+
+    const initializeCartState = async () => {
+        const cartId = JSON.parse(localStorage.getItem("cartId"));
+        const email = JSON.parse(localStorage.getItem("user"));
+        const token = JSON.parse(localStorage.getItem("token"));
+        if (email === null) {
+            return;
+        }
+        const response = await axios.get(`http://localhost:8080/api/users/${email}/carts/${cartId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        dispatch(initializeCart(response.data.products));
+    };
 
     /**========================================================================
      *                          User Login Function
@@ -31,7 +49,7 @@ const Login = () => {
         try {
 
             const response = await axios.post("http://localhost:8080/api/login", userLogin);
-            const {"jwt-token": token, role, firstName, lastName, user} = response.data;
+            const {"jwt-token": token, role, firstName, lastName, user, userId, cartId} = response.data;
 
             // Store the token and user info in local storage
             localStorage.setItem("token", JSON.stringify(token));
@@ -39,12 +57,16 @@ const Login = () => {
             localStorage.setItem("firstName", JSON.stringify(firstName));
             localStorage.setItem("lastName", JSON.stringify(lastName));
             localStorage.setItem("user", JSON.stringify(user));
+            localStorage.setItem("userId", JSON.stringify(userId));
+            localStorage.setItem("cartId", JSON.stringify(cartId));
 
             // Clear the login form
             setUserLogin({
                 email: "",
                 password: "",
             });
+
+            initializeCartState();
 
             toast.success("Login Successfully");
             setLoading(false);
@@ -53,7 +75,7 @@ const Login = () => {
             if (role === "ADMIN") {
                 navigate("/admin-dashboard");
             } else {
-                navigate("/user-dashboard");
+                navigate("/");
             }
         } catch (error) {
             console.error(error);

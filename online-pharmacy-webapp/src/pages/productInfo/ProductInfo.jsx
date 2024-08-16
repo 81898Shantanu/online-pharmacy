@@ -33,6 +33,11 @@ const ProductInfo = () => {
   const dispatch = useDispatch();
 
   const addCart = (item) => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user === null) {
+      toast.error("Please login before adding items to cart");
+      return;
+    }
     dispatch(addToCart(item));
     toast.success("Added to cart");
   };

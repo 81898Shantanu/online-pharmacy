@@ -47,6 +47,11 @@ const HomePageProductCard = () => {
   };
 
   const addCart = (item) => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user === null) {
+      toast.error("Please login before adding items to cart");
+      return;
+    }
     const quantity = selectedQuantities[item.productId] || 1;
 
     if (quantity > item.quantity) {

@@ -39,11 +39,7 @@ const Signup = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post("http://localhost:8080/api/register", userSignup);
-
-      const user = response.data;
-
-      localStorage.setItem("users", JSON.stringify(user));
+      await axios.post("http://localhost:8080/api/register", userSignup);
 
       setUserSignup({
         firstName: "",

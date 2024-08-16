@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import SearchBar from "../searchBar/SearchBar";
 import { useSelector, useDispatch } from "react-redux";
-import { resetCart } from "../../redux/cartSlice"; // Adjust the path as needed
+import {resetCart} from "../../redux/cartSlice"; // Adjust the path as needed
 import "../../App.css";
 
 const Navbar = () => {
