@@ -73,10 +73,6 @@ const HomePageProductCard = () => {
         toast.success("Removed from cart");
     };
 
-    useEffect(() => {
-        localStorage.setItem("cart", JSON.stringify(cartItems));
-    }, [cartItems]);
-
     return (
         <div className="mt-4">
             <div className="text-center mb-4">

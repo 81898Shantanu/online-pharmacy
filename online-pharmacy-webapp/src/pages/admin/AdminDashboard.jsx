@@ -69,7 +69,6 @@ const AdminDashboard = () => {
 
         // Remove user-related data from localStorage
         localStorage.removeItem("user");
-        localStorage.removeItem("cart");
         localStorage.removeItem("token");
         localStorage.removeItem("role");
         localStorage.removeItem("lastName");

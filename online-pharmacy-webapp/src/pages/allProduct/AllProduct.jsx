@@ -75,10 +75,6 @@ const AllProduct = () => {
         toast.success("Removed from cart");
     };
 
-    useEffect(() => {
-        localStorage.setItem("cart", JSON.stringify(cartItems));
-    }, [cartItems]);
-
     return (
         <Layout>
             <div className="container py-5">

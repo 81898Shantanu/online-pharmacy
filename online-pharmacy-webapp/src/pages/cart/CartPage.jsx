@@ -8,10 +8,12 @@ import axios from "axios";
 import BuyNowModal from "../../components/buyNowModal/BuyNowModal";
 import {Navigate} from "react-router";
 import "bootstrap/dist/css/bootstrap.min.css";
+import {useNavigate} from "react-router-dom";
 
 const CartPage = () => {
     const cartItems = useSelector((state) => state.cart);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const deleteCart = (item) => {
         dispatch(deleteFromCart(item));
@@ -48,59 +50,21 @@ const CartPage = () => {
 
     const cartTotal = cartItems.map((item) => item.price * item.quantity).reduce((prevValue, currValue) => prevValue + currValue, 0);
 
-    useEffect(() => {
-        localStorage.setItem("cart", JSON.stringify(cartItems));
-    }, [cartItems]);
-
     // user
     const user = JSON.parse(localStorage.getItem("user"));
-
-    // Buy Now Function
-    const [addressInfo, setAddressInfo] = useState({
-        name: "",
-        address: "",
-        pincode: "",
-        mobileNumber: "",
-        time: new Date().toISOString(),
-        date: new Date().toLocaleDateString("en-US", {
-            month: "short",
-            day: "2-digit",
-            year: "numeric",
-        }),
-    });
+    const cartId = JSON.parse(localStorage.getItem("cartId"));
+    const token = JSON.parse(localStorage.getItem("token"));
 
     const buyNowFunction = async () => {
-        // validation
-        if (addressInfo.name === "" || addressInfo.address === "" || addressInfo.pincode === "" || addressInfo.mobileNumber === "") {
-            return toast.error("All Fields are required");
-        }
-
-        // Order Info
-        const orderInfo = {
-            cartItems,
-            addressInfo,
-            email: user.email,
-            userid: user.uid,
-            status: "confirmed",
-            time: new Date().toISOString(),
-            date: new Date().toLocaleDateString("en-US", {
-                month: "short",
-                day: "2-digit",
-                year: "numeric",
-            }),
-        };
-
         try {
-            await axios.post("https://your-api-endpoint.com/orders", orderInfo);
-            dispatch(resetCart());
-            localStorage.removeItem("cart");
-            setAddressInfo({
-                name: "",
-                address: "",
-                pincode: "",
-                mobileNumber: "",
+            await axios.post(`http://localhost:8080/api/users/${user}/carts/${cartId}/payments/UPI_QR/order`, null, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
             });
-            toast.success("Order Placed Successfully");
+            dispatch(resetCart());
+            toast.success("Order placed successfully");
+            navigate("/user-dashboard");
         } catch (error) {
             console.log(error);
             toast.error("Failed to place order");
@@ -115,8 +79,8 @@ const CartPage = () => {
                     <div className="col-md-8">
                         <div className="card">
                             <div className="card-body">
-                                <h2 className="card-title">Items in your shopping cart</h2>
-                                {cartItems.length > 0 ? (
+                                <h3 className="card-title">{cartItems.length > 0 ? "Items in your shopping cart" : "No items in the cart"}</h3>
+                                {cartItems.length > 0 && (
                                     cartItems.map((item) => {
                                         const {productId, productName, price, image, quantity, category} = item;
                                         return (
@@ -148,35 +112,34 @@ const CartPage = () => {
                                             </div>
                                         );
                                     })
-                                ) : (
-                                    <p className="text-center">No items in the cart</p>
                                 )}
                             </div>
                         </div>
                     </div>
-                    <div className="col-md-4">
-                        <div className="card">
-                            <div className="card-body">
-                                <h2 className="card-title">Price Details</h2>
-                                <dl className="row mb-3">
-                                    <dt className="col-sm-6">Price ({cartItemTotal} items)</dt>
-                                    <dd className="col-sm-6">₹{cartTotal}</dd>
-                                </dl>
-                                <dl className="row mb-3">
-                                    <dt className="col-sm-6">Delivery Charges</dt>
-                                    <dd className="col-sm-6 text-success">Free</dd>
-                                </dl>
-                                <dl className="row mb-4 border-top pt-2">
-                                    <dt className="col-sm-6">Total Amount</dt>
-                                    <dd className="col-sm-6">₹{cartTotal}</dd>
-                                </dl>
-                                <div className="d-flex justify-content-between">
-                                    {user ? <BuyNowModal addressInfo={addressInfo} setAddressInfo={setAddressInfo}
-                                                         buyNowFunction={buyNowFunction}/> : <Navigate to="/login"/>}
+                    { cartItems.length > 0 &&
+                        <div className="col-md-4">
+                            <div className="card">
+                                <div className="card-body">
+                                    <h2 className="card-title">Price Details</h2>
+                                    <dl className="row mb-3">
+                                        <dt className="col-sm-6">Price ({cartItemTotal} items)</dt>
+                                        <dd className="col-sm-6">₹{cartTotal}</dd>
+                                    </dl>
+                                    <dl className="row mb-3">
+                                        <dt className="col-sm-6">Delivery Charges</dt>
+                                        <dd className="col-sm-6 text-success">Free</dd>
+                                    </dl>
+                                    <dl className="row mb-4 border-top pt-2">
+                                        <dt className="col-sm-6">Total Amount</dt>
+                                        <dd className="col-sm-6">₹{cartTotal}</dd>
+                                    </dl>
+                                    <div className="d-flex justify-content-between">
+                                        <BuyNowModal buyNowFunction={buyNowFunction} />
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    }
                 </div>
             </div>
         </Layout>
