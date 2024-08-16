@@ -1,12 +1,12 @@
 .container {
-  max-width: 95%;
+    max-width: 95%;
 }
 
 .img-thumbnail {
-  border-radius: 5px;
-  object-fit: cover;
+    border-radius: 5px;
+    object-fit: cover;
 }
 
 .cursor-pointer {
-  cursor: pointer;
+    cursor: pointer;
 }

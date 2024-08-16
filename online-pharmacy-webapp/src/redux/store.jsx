@@ -1,4 +1,4 @@
-import { configureStore } from "@reduxjs/toolkit";
+import {configureStore} from "@reduxjs/toolkit";
 import cartSlice from "./cartSlice";
 // Optionally import redux-persist
 // import { persistStore, persistReducer } from 'redux-persist';
@@ -13,10 +13,10 @@ import cartSlice from "./cartSlice";
 // const persistedReducer = persistReducer(persistConfig, cartSlice);
 
 export const store = configureStore({
-  reducer: {
-    cart: cartSlice, // Or use persistedReducer for persistence
-  },
-  devTools: true, // Enable Redux DevTools extension
+    reducer: {
+        cart: cartSlice, // Or use persistedReducer for persistence
+    },
+    devTools: true, // Enable Redux DevTools extension
 });
 
 // Optional: Create a persistor for redux-persist

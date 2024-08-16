@@ -1,15 +1,15 @@
-import { useNavigate, useParams } from "react-router";
+import {useNavigate, useParams} from "react-router";
 import Layout from "../../components/layout/Layout";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import Loader from "../../components/loader/Loader";
-import { useDispatch, useSelector } from "react-redux";
-import { addToCart, deleteFromCart } from "../../redux/cartSlice";
+import {useDispatch, useSelector} from "react-redux";
+import {addToCart, deleteFromCart} from "../../redux/cartSlice";
 import toast from "react-hot-toast";
-import { Button, Card, Container, Row, Col } from 'react-bootstrap';
+import {Button, Card, Col, Container, Row} from 'react-bootstrap';
 import axios from "axios";
 
 const CategoryPage = () => {
-    const { categoryname } = useParams();
+    const {categoryname} = useParams();
     const [categoryId, setCategoryId] = useState(null);
     const [products, setProducts] = useState([]);
     const [selectedQuantities, setSelectedQuantities] = useState({});
@@ -19,14 +19,14 @@ const CategoryPage = () => {
     const dispatch = useDispatch();
 
     const categoryList = [
-        { id: "1", image: "/drugs.png", name: "drugs" },
-        { id: "2", image: "/injection.png", name: "injection" },
-        { id: "3", image: "sun-block.png", name: "cosmetic" },
-        { id: "4", image: "homeopathy.png", name: "homeo" },
-        { id: "5", image: "pain-relief.png", name: "pain-relief" },
-        { id: "6", image: "lab-equipment.png", name: "devices" },
-        { id: "7", image: "multivitamin.png", name: "vitamins" },
-        { id: "8", image: "first-aid-kit.png", name: "first-Aid" },
+        {id: "1", image: "/drugs.png", name: "drugs"},
+        {id: "2", image: "/injection.png", name: "injection"},
+        {id: "3", image: "sun-block.png", name: "cosmetic"},
+        {id: "4", image: "homeopathy.png", name: "homeo"},
+        {id: "5", image: "pain-relief.png", name: "pain-relief"},
+        {id: "6", image: "lab-equipment.png", name: "devices"},
+        {id: "7", image: "multivitamin.png", name: "vitamins"},
+        {id: "8", image: "first-aid-kit.png", name: "first-Aid"},
     ];
 
     useEffect(() => {
@@ -100,13 +100,13 @@ const CategoryPage = () => {
                 </div>
                 {loading ? (
                     <div className="d-flex justify-content-center">
-                        <Loader />
+                        <Loader/>
                     </div>
                 ) : (
                     <Row>
                         {products.length > 0 ? (
                             products.map((item, index) => {
-                                const { productId, productName, price, image, quantity } = item;
+                                const {productId, productName, price, image, quantity} = item;
                                 return (
                                     <Col key={index} xs={12} md={6} lg={4} className="mb-4">
                                         <Card className="h-100">
@@ -114,7 +114,7 @@ const CategoryPage = () => {
                                                 variant="top"
                                                 src={image}
                                                 onClick={() => navigate(`/productinfo/${productId}`)}
-                                                style={{ cursor: 'pointer', height: '200px', objectFit: 'cover' }}
+                                                style={{cursor: 'pointer', height: '200px', objectFit: 'cover'}}
                                             />
                                             <Card.Body>
                                                 <Card.Title>{productName.substring(0, 25)}</Card.Title>
@@ -160,7 +160,7 @@ const CategoryPage = () => {
                                     className="mb-2"
                                     src="https://cdn-icons-png.flaticon.com/128/2748/2748614.png"
                                     alt=""
-                                    style={{ width: '100px', height: '100px' }}
+                                    style={{width: '100px', height: '100px'}}
                                 />
                                 <h2 className="text-black">No {categoryname} products found</h2>
                             </div>

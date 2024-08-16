@@ -5,7 +5,7 @@ const getCartId = () => JSON.parse(localStorage.getItem("cartId"));
 const getToken = () => JSON.parse(localStorage.getItem("token"));
 
 const updateCart = (productId, quantity) => {
-    axios.post(`http://localhost:8080/api/users/carts/${getCartId()}/products/${productId}/quantity/${quantity}`, null,{
+    axios.post(`http://localhost:8080/api/users/carts/${getCartId()}/products/${productId}/quantity/${quantity}`, null, {
         headers: {
             Authorization: `Bearer ${getToken()}`
         }
