@@ -61,6 +61,8 @@ public class AuthController {
                 "role", role,
                 "firstName", userDTO.getFirstName(),
                 "lastName", userDTO.getLastName(),
-                "user", userDTO.getEmail());
+                "user", userDTO.getEmail(),
+                "cartId", userDTO.getCart().getCartId(),
+                "userId", userDTO.getUserId());
     }
 }

@@ -34,17 +34,9 @@ public class CartServiceImpl implements CartService {
 //		The method adds a product to the cart, ensuring it is not already there, 
 //		checking product availability, and updating the cart and product details. 
 //		It returns the updated cart details in a CartDTO object.
-        Cart cart = cartRepo.findById(cartId)
-                .orElseThrow(() -> new ResourceNotFoundException("Cart", "cartId", cartId));
 
         Product product = productRepo.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
-
-        CartItem cartItem = cartItemRepo.findCartItemByProductIdAndCartId(cartId, productId);
-
-        if (cartItem != null) {
-            throw new APIException("Product " + product.getProductName() + " already exists in the cart");
-        }
 
         if (product.getQuantity() == 0) {
             throw new APIException(product.getProductName() + " is not available");
@@ -55,19 +47,28 @@ public class CartServiceImpl implements CartService {
                     + " less than or equal to the quantity " + product.getQuantity() + ".");
         }
 
-        CartItem newCartItem = new CartItem();
+        if (quantity == 0) {
+            deleteProductFromCart(cartId, productId);
+            return modelMapper.map(cartRepo.findById(cartId).orElseThrow(), CartDTO.class);
+        }
 
-        newCartItem.setProduct(product);
-        newCartItem.setCart(cart);
-        newCartItem.setQuantity(quantity);
-        newCartItem.setDiscount(product.getDiscount());
-        newCartItem.setProductPrice(product.getSpecialPrice());
+        Cart cart = cartRepo.findById(cartId)
+                .orElseThrow(() -> new ResourceNotFoundException("Cart", "cartId", cartId));
 
-        cartItemRepo.save(newCartItem);
+        CartItem cartItem = cartItemRepo.findCartItemByProductIdAndCartId(cartId, productId);
+
+        if (cartItem == null) {
+            cartItem = new CartItem();
+            cartItem.setProduct(product);
+            cartItem.setCart(cart);
+            cartItem.setQuantity(quantity);
+        } else {
+            cartItem.setQuantity(quantity);
+        }
+
+        cartItemRepo.save(cartItem);
 
         product.setQuantity(product.getQuantity() - quantity);
-
-        cart.setTotalPrice(cart.getTotalPrice() + (product.getSpecialPrice() * quantity));
 
         CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
 
@@ -117,62 +118,16 @@ public class CartServiceImpl implements CartService {
         CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
 
         List<ProductDTO> products = cart.getCartItems().stream()
-                .map(p -> modelMapper.map(p.getProduct(), ProductDTO.class)).collect(Collectors.toList());
+                .map(item -> {
+                    ProductDTO productDTO = modelMapper.map(item.getProduct(), ProductDTO.class);
+                    productDTO.setQuantity(item.getQuantity());
+                    return productDTO;
+                })
+                .collect(Collectors.toList());
 
         cartDTO.setProducts(products);
 
         return cartDTO;
-    }
-
-    @Override
-    public CartDTO updateProductQuantityInCart(Long cartId, Long productId, Integer quantity) {
-//		This method updates the quantity of a product in a cart.
-//		It checks the availability of the product and whether the product is already in the cart.
-//		It updates the inventory quantity, the cart item details, and the cart's total price.
-//		Finally, it returns the updated cart details in a CartDTO object.
-
-        Cart cart = cartRepo.findById(cartId)
-                .orElseThrow(() -> new ResourceNotFoundException("Cart", "cartId", cartId));
-
-        Product product = productRepo.findById(productId)
-                .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
-
-        if (product.getQuantity() == 0) {
-            throw new APIException(product.getProductName() + " is not available");
-        }
-
-        if (product.getQuantity() < quantity) {
-            throw new APIException("Please, make an order of the " + product.getProductName()
-                    + " less than or equal to the quantity " + product.getQuantity() + ".");
-        }
-
-        CartItem cartItem = cartItemRepo.findCartItemByProductIdAndCartId(cartId, productId);
-
-        if (cartItem == null) {
-            throw new APIException("Product " + product.getProductName() + " not available in the cart!!!");
-        }
-
-        double cartPrice = cart.getTotalPrice() - (cartItem.getProductPrice() * cartItem.getQuantity());
-
-        product.setQuantity(product.getQuantity() + cartItem.getQuantity() - quantity);
-
-        cartItem.setProductPrice(product.getSpecialPrice());
-        cartItem.setQuantity(quantity);
-        cartItem.setDiscount(product.getDiscount());
-
-        cart.setTotalPrice(cartPrice + (cartItem.getProductPrice() * quantity));
-
-        cartItem = cartItemRepo.save(cartItem);
-
-        CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
-
-        List<ProductDTO> productDTOs = cart.getCartItems().stream()
-                .map(p -> modelMapper.map(p.getProduct(), ProductDTO.class)).collect(Collectors.toList());
-
-        cartDTO.setProducts(productDTOs);
-
-        return cartDTO;
-
     }
 
     @Override
@@ -193,17 +148,11 @@ public class CartServiceImpl implements CartService {
             throw new APIException("Product " + product.getProductName() + " not available in the cart!!!");
         }
 
-        double cartPrice = cart.getTotalPrice() - (cartItem.getProductPrice() * cartItem.getQuantity());
-
-        cartItem.setProductPrice(product.getSpecialPrice());
-
-        cart.setTotalPrice(cartPrice + (cartItem.getProductPrice() * cartItem.getQuantity()));
-
         cartItemRepo.save(cartItem);
     }
 
     @Override
-    public String deleteProductFromCart(Long cartId, Long productId) {
+    public void deleteProductFromCart(Long cartId, Long productId) {
 //		This method removes a product from the cart.
 //		It checks for the existence of the cart and cart item.
 //		It updates the cart's total price and restores the product's quantity.
@@ -217,13 +166,9 @@ public class CartServiceImpl implements CartService {
             throw new ResourceNotFoundException("Product", "productId", productId);
         }
 
-        cart.setTotalPrice(cart.getTotalPrice() - (cartItem.getProductPrice() * cartItem.getQuantity()));
-
         Product product = cartItem.getProduct();
         product.setQuantity(product.getQuantity() + cartItem.getQuantity());
 
         cartItemRepo.deleteCartItemByProductIdAndCartId(cartId, productId);
-
-        return "Product " + cartItem.getProduct().getProductName() + " removed from the cart !!!";
     }
 }

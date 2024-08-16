@@ -60,7 +60,12 @@ public class OrderServiceImpl implements OrderService {
         order.setEmail(emailId);
         order.setOrderDate(LocalDate.now());
 
-        order.setTotalAmount(cart.getTotalPrice());
+        order.setTotalAmount(cart.getCartItems()
+                .stream()
+                .map(CartItem::getProduct)
+                .map(Product::getPrice)
+                .mapToDouble(price -> price)
+                .sum());
         order.setOrderStatus("Order Accepted !");
 
         Payment payment = new Payment();
@@ -86,8 +91,6 @@ public class OrderServiceImpl implements OrderService {
 
             orderItem.setProduct(cartItem.getProduct());
             orderItem.setQuantity(cartItem.getQuantity());
-            orderItem.setDiscount(cartItem.getDiscount());
-            orderItem.setOrderedProductPrice(cartItem.getProductPrice());
             orderItem.setOrder(savedOrder);
 
             orderItems.add(orderItem);
